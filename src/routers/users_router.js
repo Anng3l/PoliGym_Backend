@@ -8,7 +8,7 @@ import { accountVerificationMiddleware } from "../middlewares/accountVerificatio
 
 const router = Router();
 
-router.post("/users", verifyToken, authorizedRoles("administrador"), createUserController);
+router.post("/users", verifyToken, accountVerificationMiddleware, authorizedRoles("administrador"), createUserController);
 router.put("/users/:username", verifyToken, accountVerificationMiddleware, authorizedRoles("administrador"), updateUserController);
 router.get("/users", verifyToken, accountVerificationMiddleware, authorizedRoles("administrador", "entrenador"), getAllUsersController);
 router.get("/users/:username", verifyToken, accountVerificationMiddleware, authorizedRoles("administrador"), getOneUserController);
