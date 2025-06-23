@@ -25,7 +25,7 @@ jest.mock('express-validator', () => ({
 }));
 
 
-describe('recoverPasswordMailingController', () => {
+describe('Enviar correo para restablecimiento de contraseña', () => {
   let req, res;
 
   beforeEach(() => {
@@ -74,7 +74,7 @@ describe('recoverPasswordMailingController', () => {
   });
 });
 
-describe('confirmTokenController', () => {
+describe('Confirmar identidad para restablecer contraseña', () => {
   let req, res;
 
   beforeEach(() => {
@@ -115,7 +115,7 @@ describe('confirmTokenController', () => {
   });
 });
 
-describe('recoverPasswordController', () => {
+describe('Restablecer contraseña', () => {
   let req, res;
 
   beforeEach(() => {

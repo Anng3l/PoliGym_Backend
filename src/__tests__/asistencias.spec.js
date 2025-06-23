@@ -80,7 +80,7 @@ jest.mock("mongoose", () => {
 import Asistencia from "../models/asistencia_model.js";
 import User from "../models/users_model.js";
 
-describe("crearAsistenciaControllerEntrenador", () => {
+describe("Crear asistencia - Entrenador", () => {
   let req, res;
 
   beforeEach(() => {
@@ -121,7 +121,7 @@ describe("crearAsistenciaControllerEntrenador", () => {
   });
 });
 
-describe("crearAsistenciaController", () => {
+describe("Crear asistencia", () => {
   let req, res;
 
   beforeEach(() => {
@@ -156,7 +156,7 @@ describe("crearAsistenciaController", () => {
   });
 });
 
-describe("obtenerAsistenciasController", () => {
+describe("Listar asistencias", () => {
   let req, res;
 
   beforeEach(() => {
@@ -176,7 +176,7 @@ describe("obtenerAsistenciasController", () => {
   });
 });
 
-describe("actualizarAsistenciaController", () => {
+describe("Actualizar asistencia", () => {
   let req, res;
 
   beforeEach(() => {
@@ -205,7 +205,7 @@ describe("actualizarAsistenciaController", () => {
   });
 });
 
-describe("eliminarAsistenciaController", () => {
+describe("Eliminar asistencia", () => {
   let req, res;
 
   beforeEach(() => {
@@ -227,7 +227,7 @@ describe("eliminarAsistenciaController", () => {
   });
 });
 
-describe("obtenerAsistenciasPorUserController", () => {
+describe("Obtener asistencias por usuario", () => {
   let req, res;
 
   beforeEach(() => {

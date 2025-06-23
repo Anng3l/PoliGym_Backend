@@ -79,7 +79,7 @@ describe("Controladores de Alimentacion", () => {
     res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
   });
 
-  describe("createAlimentacionController", () => {
+  describe("Crear alimentación", () => {
     it("debe fallar si falta un dato", async () => {
       req.body = { name: "", information: "", userId: "" };
       await controllers.createAlimentacionController(req, res);
@@ -124,7 +124,7 @@ describe("Controladores de Alimentacion", () => {
     });
   });
 
-  describe("updateAlimentacionController", () => {
+  describe("Actualizar alimentación", () => {
     it("debe fallar si _id inválido", async () => {
       req.params._id = "invalido";
       mongoose.isValidObjectId.mockReturnValue(false);
@@ -176,7 +176,7 @@ describe("Controladores de Alimentacion", () => {
     });
   });
 
-  describe("getAllAlimentacionControllerEntrenador", () => {
+  describe("Listar toda la informacion de alimentacion - Entrenador", () => {
     it("debe fallar si _id inválido", async () => {
       req.params._id = "invalido";
       mongoose.isValidObjectId.mockReturnValue(false);
@@ -218,7 +218,7 @@ describe("Controladores de Alimentacion", () => {
     });
   });
 
-  describe("getAllAlimentacionController", () => {
+  describe("Lista toda la informacion de alimentacion", () => {
     it("debe fallar si userId inválido", async () => {
       req.user._id = "invalido";
       mongoose.isValidObjectId.mockReturnValue(false);
@@ -260,7 +260,7 @@ describe("Controladores de Alimentacion", () => {
     });
   });
 
-  describe("deleteAlimentacionController", () => {
+  describe("Eliminar informacion de alimentacion", () => {
     it("debe fallar si _id inválido en delete", async () => {
       req.params._id = "invalido";
       mongoose.isValidObjectId.mockReturnValue(false);

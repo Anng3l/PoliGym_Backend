@@ -28,7 +28,7 @@ const mockResponse = () => {
 };
 
 
-describe("logInController", () => {
+describe("Inicio de sesión", () => {
   let req;
   let res;
 

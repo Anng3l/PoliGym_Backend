@@ -23,7 +23,7 @@ jest.mock("express-validator", () => ({
 jest.mock("../../models/users_model.js");
 jest.mock("../../config/nodemailer.js");
 
-describe("registerController", () => {
+describe("Registrar cliente", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     
@@ -84,7 +84,7 @@ describe("registerController", () => {
   });
 });
 
-describe("verificacionDeRegistroController", () => {
+describe("Verificacion de registro", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

@@ -45,7 +45,7 @@ jest.mock("mongoose", () => {
   };
 });
 
-describe("Controladores de actualización de rutinas", () => {
+describe("Actualizar una rutina", () => {
 
   afterEach(() => {
     jest.clearAllMocks();

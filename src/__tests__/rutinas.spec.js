@@ -19,7 +19,7 @@ jest.mock("../models/users_model.js");
 //jest.mock("express-validator");
 
 
-describe("createRoutine", () => {
+describe("Crear rutina", () => {
   let req, res;
 
   beforeEach(() => {
@@ -56,7 +56,7 @@ describe("createRoutine", () => {
 });
 
 
-describe("createRoutineEntrenador", () => {
+describe("Crear rutina - Entrenador", () => {
   let req, res;
 
   beforeEach(() => {
@@ -93,7 +93,7 @@ describe("createRoutineEntrenador", () => {
   });
 });
 
-describe("getRoutinesByUsernameEntrenador", () => {
+describe("Listar rutinas por username - Entrenador", () => {
   let req, res;
 
   beforeEach(() => {
@@ -138,7 +138,7 @@ describe("getRoutinesByUsernameEntrenador", () => {
   });
 });
 
-describe("getRoutinesByUsername", () => {
+describe("Listar rutinas por username", () => {
   let req, res;
 
   beforeEach(() => {
@@ -231,7 +231,7 @@ describe("getRoutinesByUsername", () => {
 
 
 
-describe("deleteRoutineEntrenador", () => {
+describe("Eliminar rutina - Entrenador", () => {
   let req, res;
 
   beforeEach(() => {
@@ -287,7 +287,7 @@ describe("deleteRoutineEntrenador", () => {
 
 
 
-describe("deleteRoutine", () => {
+describe("Eliminar rutina", () => {
   let req, res;
 
   beforeEach(() => {
@@ -373,42 +373,5 @@ describe("deleteRoutine", () => {
     }));
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

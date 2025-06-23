@@ -19,7 +19,7 @@ jest.mock("express-validator", () => ({
   validationResult: jest.fn()
 }));
 
-describe("createOneProgressController", () => {
+describe("Crear progreso", () => {
   let req, res;
 
   beforeEach(() => {
@@ -68,7 +68,7 @@ describe("createOneProgressController", () => {
   });
 });
 
-describe("listarProgresosUsuarioController", () => {
+describe("Listar progresos por usuario", () => {
   let req, res;
 
   beforeEach(() => {
@@ -108,7 +108,7 @@ describe("listarProgresosUsuarioController", () => {
   });
 });
 
-describe("listarProgresosUsuarioControllerEntrenador", () => {
+describe("Listar progresos por usuario - Entrenador", () => {
   let req, res;
 
   beforeEach(() => {
@@ -139,7 +139,7 @@ describe("listarProgresosUsuarioControllerEntrenador", () => {
   });
 });
 
-describe("updateOneProgressController", () => {
+describe("Actualizar progreso", () => {
   let req, res;
 
   beforeEach(() => {
@@ -186,7 +186,7 @@ describe("updateOneProgressController", () => {
   });
 });
 
-describe("deleteOneProgressController", () => {
+describe("Eliminar progreso", () => {
   let req, res;
 
   beforeEach(() => {
