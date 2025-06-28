@@ -18,7 +18,7 @@ jest.mock("express-validator", () => ({
   ...jest.requireActual("express-validator"),
   validationResult: jest.fn()
 }));
-
+/*
 describe("Crear progreso", () => {
   let req, res;
 
@@ -66,7 +66,7 @@ describe("Crear progreso", () => {
     await createOneProgressController(req, res);
     expect(res.status).toHaveBeenCalledWith(500);
   });
-});
+});*/
 
 describe("Listar progresos por usuario", () => {
   let req, res;

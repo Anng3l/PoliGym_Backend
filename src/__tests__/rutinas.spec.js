@@ -8,8 +8,6 @@ import {
   createRoutineEntrenador,
   getRoutinesByUsername,
   getRoutinesByUsernameEntrenador,
-  updateRoutine,
-  updateRoutineEntrenador,
   deleteRoutine,
   deleteRoutineEntrenador
 } from "../controllers/routines_controller.js";

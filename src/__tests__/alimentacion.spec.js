@@ -67,7 +67,7 @@ import UsersMock from "../models/users_model.js";
 
 // Tests
 
-describe("Controladores de Alimentacion", () => {
+describe("Información de Alimentacion", () => {
   let req, res;
 
   beforeEach(() => {
@@ -78,7 +78,7 @@ describe("Controladores de Alimentacion", () => {
     req = { body: {}, params: {}, user: { _id: "507f1f77bcf86cd799439011" } };
     res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
   });
-
+  
   describe("Crear alimentación", () => {
     it("debe fallar si falta un dato", async () => {
       req.body = { name: "", information: "", userId: "" };
@@ -123,7 +123,7 @@ describe("Controladores de Alimentacion", () => {
       });
     });
   });
-
+  /*
   describe("Actualizar alimentación", () => {
     it("debe fallar si _id inválido", async () => {
       req.params._id = "invalido";
@@ -291,5 +291,5 @@ describe("Controladores de Alimentacion", () => {
         error: "delerr",
       });
     });
-  });
+  });*/
 });

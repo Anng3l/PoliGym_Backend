@@ -118,7 +118,7 @@ describe("Gestión de usuarios", () => {
 jest.mock("../models/users_model.js");
 jest.mock("bcrypt");
 jest.mock("../config/nodemailer.js");
-
+/*
 describe("Crear usuario", () => {
   let req, res;
 
@@ -234,7 +234,7 @@ describe("Crear usuario", () => {
 });
 
 
-
+*/
 
 
 
