@@ -8,7 +8,7 @@ import nodemailerMethods from "../config/nodemailer.js";
 const getAllUsersController = async (req, res) => {
     try
     {
-        const data = await User.find();
+        const data = await User.find().select("-password");
 
         if (data)
         {
@@ -34,7 +34,7 @@ const getOneUserController = async (req, res) => {
 
     try
     {
-        const data = await User.findOne({username});
+        const data = await User.findOne({username}).select("-password");
         if (!data) return res.status(203).json({msg: "No existe usuario con ese nombre de usuario"})
         return res.status(200).json(data);
     }
@@ -56,7 +56,7 @@ const getUsersByRoleController = async (req, res) => {
     try
     {
         if (!["administrador", "entrenador", "cliente"].includes(role)) return res.status(203).json({msg: "El rol ingresado es incorrecto"});
-        const data = await User.find({role});
+        const data = await User.find({role}).select("-password");
         if (!data) return res.status(203).json({msg: `No se encontraron usuarios con el rol ${role}`});
         return res.status(200).json(data);
     }
@@ -171,8 +171,9 @@ const updateUserController = async (req, res) => {
     delete datos._id;
     delete datos.token;
     delete datos.confirmEmail;
-    //delete datos.refreshToken;
+    delete datos.refreshToken;
     delete datos.recoverPassword;
+    delete datos.password;
 
     await check("username")
         .optional()
@@ -186,6 +187,7 @@ const updateUserController = async (req, res) => {
     await check("name")
         .optional()
         .trim()
+        .isString()
         .isLength({min: 3, max: 15})
         .withMessage("EL nombre debe tener entre 5 y 15 dígitos")
         .matches(/^[A-Za-z ]+$/)
@@ -195,6 +197,7 @@ const updateUserController = async (req, res) => {
     await check("lastname")
         .optional()
         .trim()
+        .isString()
         .isLength({min: 2, max: 15})
         .withMessage("EL nombre debe tener entre 5 y 15 dígitos")
         .matches(/^[A-Za-z ]+$/)
@@ -209,15 +212,6 @@ const updateUserController = async (req, res) => {
         .normalizeEmail()
         .run(req);
 
-    await check("password")
-        .optional()
-        .trim()
-        .isStrongPassword({ minLength: 8 })
-        .isLength({ max: 20 })
-        .withMessage("La contraseña debe tener entre 8 y 20 dígitos de longitud")
-        .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@_-])/)
-        .withMessage("La contraseña no cumple con el formato mínimo")
-        .run(req);
 
     const errores = validationResult(req);
 
@@ -244,12 +238,6 @@ const updateUserController = async (req, res) => {
             const cloudinaryResponse = await cloudinary.uploader.upload(req.files.imagen.tempFilePath, {folder: "Fotos_De_Perfil"});
             newData.photo = cloudinaryResponse.secure_url;
         }*/
-
-        if (datos.password)
-        {
-            const newPassword = await bcrypt.hash(datos.password, 10);
-            newData.password = newPassword;
-        }
 
         //Llamada al modelo con manejo de error
         const data = await User.updateOne({username}, {$set:newData});

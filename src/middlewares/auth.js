@@ -21,17 +21,13 @@ const verifyToken = async (req, res, next) => {
         }
         req.user = decoded;
 
-        //console.log("En verifyToken: ", req.user)
         next();
     })
 }
 
-const refreshToken = async (userInfo) => {
-    return jwt.sign(userInfo, process.env.REFRESH_JWT_SECRET, {expiresIn: "24h"});
-};
+
 
 export {
     createToken,
-    verifyToken,
-    refreshToken
+    verifyToken
 }
