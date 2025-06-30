@@ -1,5 +1,4 @@
 import bcrypt from "bcrypt";
-import {v2 as cloudinary} from "cloudinary"
 import { check, validationResult } from "express-validator";
 
 import User from "../models/users_model.js";
@@ -85,17 +84,15 @@ const createUserController = async (req, res) => {
     await check("name")
         .isLength({min: 3, max: 15})
         .trim()
+        .isString()
         .withMessage("El nombre debe tener entre 3 y 15 dígitos")
-        .matches(/^[A-Za-z]+$/)
-        .withMessage("El nombre debe contener sólo letras")
         .run(req);
 
     await check("lastname")
         .isLength({min: 2, max: 15})
         .trim()
+        .isString()
         .withMessage("El apellido debe tener entre 2 y 15 dígitos")
-        .matches(/^[A-Za-z]+$/)
-        .withMessage("El apellido debe contener sólo letras")
         .run(req);
         
     await check("email")
@@ -190,8 +187,6 @@ const updateUserController = async (req, res) => {
         .isString()
         .isLength({min: 3, max: 15})
         .withMessage("EL nombre debe tener entre 5 y 15 dígitos")
-        .matches(/^[A-Za-z ]+$/)
-        .withMessage("El nombre debe contener sólo letras")
         .run(req);
         
     await check("lastname")
@@ -200,8 +195,6 @@ const updateUserController = async (req, res) => {
         .isString()
         .isLength({min: 2, max: 15})
         .withMessage("EL nombre debe tener entre 5 y 15 dígitos")
-        .matches(/^[A-Za-z ]+$/)
-        .withMessage("El nombre debe contener sólo letras")
         .run(req);
 
     await check("email")
@@ -230,14 +223,6 @@ const updateUserController = async (req, res) => {
         if (Object.values(req.body).includes("")) return res.status(203).json({msg: "Debe ingresar datos para actualizar los datos del usuario"})
         const userBD = await User.findOne({username});
         if (!userBD) return res.status(203).json({msg: "No existe usuario con ese username"});
-
-
-        /*
-        if (req?.files?.imagen)
-        {
-            const cloudinaryResponse = await cloudinary.uploader.upload(req.files.imagen.tempFilePath, {folder: "Fotos_De_Perfil"});
-            newData.photo = cloudinaryResponse.secure_url;
-        }*/
 
         //Llamada al modelo con manejo de error
         const data = await User.updateOne({username}, {$set:newData});
