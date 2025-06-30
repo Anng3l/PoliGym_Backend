@@ -170,7 +170,6 @@ const updateUserController = async (req, res) => {
     delete datos.confirmEmail;
     delete datos.refreshToken;
     delete datos.recoverPassword;
-    delete datos.password;
 
     await check("username")
         .optional()
@@ -220,6 +219,7 @@ const updateUserController = async (req, res) => {
 
     try
     {
+        if (datos.password) return res.status(203).json({msg: "No puede actualizar la clave"})
         if (Object.values(req.body).includes("")) return res.status(203).json({msg: "Debe ingresar datos para actualizar los datos del usuario"})
         const userBD = await User.findOne({username});
         if (!userBD) return res.status(203).json({msg: "No existe usuario con ese username"});
