@@ -19,7 +19,7 @@ const nodemailerMethods = {
             from: process.env.USER_MAILTRAP,
             to: userMail,
             subject: "Verificar cuenta",
-            html: `<p>Hola, haz clic <a href="${process.env.URL_FRONTEND}auth/confirm?token=${encodeURIComponent(token)}&email=${encodeURIComponent(userMail)}">aquí</a> para confirmar tu cuenta.</p>`
+            html: `<p>Hola, haz clic <a href="${process.env.URL_BACKEND}auth/confirm?token=${encodeURIComponent(token)}&email=${encodeURIComponent(userMail)}">aquí</a> para confirmar tu cuenta.</p>`
         };
     
         transporter.sendMail(mailOptions, function(error, info){
@@ -55,7 +55,7 @@ const nodemailerMethods = {
             from: process.env.USER_MAILTRAP,
             to: userMail,
             subject: "Recuperación de clave",
-            html: `<p>Hola, haz clic <a href="${process.env.URL_FRONTEND}auth/recovery-password?token=${encodeURIComponent(token)}&userId=${encodeURIComponent(userId)}">aquí</a> para confirmar tu identidad.</p>`
+            html: `<p>Hola, haz clic <a href="${process.env.URL_BACKEND}auth/recovery-password?token=${encodeURIComponent(token)}&userId=${encodeURIComponent(userId)}">aquí</a> para confirmar tu identidad.</p>`
         };
     
         transporter.sendMail(mailOptions, function(error, info){
