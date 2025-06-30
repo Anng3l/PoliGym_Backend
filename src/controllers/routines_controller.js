@@ -29,8 +29,6 @@ const createRoutineEntrenador = async (req, res) => {
           .trim()
           .isLength({ min: 5, max: 50 })
           .withMessage("El nombre debe tener entre 5 y 40 dígitos")
-          .matches(/^[\p{L}0-9\s,.\-()]+$/u)
-          .withMessage("El nombre contiene caracteres inválidos")
           .run(req);
 
     await check("description")
@@ -58,8 +56,6 @@ const createRoutineEntrenador = async (req, res) => {
               .isString()
               .isLength({min: 2, max: 40})
               .withMessage("El nombre del ejercicio debe tener entre 2 y 40 dígitos")
-              .matches(/^[A-Za-z0-9 ]+$/)
-              .withMessage("El nombre sólo puede contener letras y números")
               .run(req)
         
         await check(`exercises[${index}].series`)
@@ -119,8 +115,6 @@ const createRoutine = async (req, res) => {
           .trim()
           .isLength({ min: 5, max: 40 })
           .withMessage("El nombre debe tener entre 5 y 40 dígitos")
-          .matches(/^[\p{L}0-9\s,.\-()]+$/u)
-          .withMessage("El nombre contiene caracteres inválidos")
           .run(req);
 
     await check("description")
@@ -148,8 +142,6 @@ const createRoutine = async (req, res) => {
               .isString()
               .isLength({min: 2, max: 40})
               .withMessage("El nombre del ejercicio debe tener entre 2 y 40 dígitos")
-              .matches(/^[A-Za-z0-9 ]+$/)
-              .withMessage("El nombre sólo puede contener letras y números")
               .run(req)
         
         await check(`exercises[${index}].series`)
