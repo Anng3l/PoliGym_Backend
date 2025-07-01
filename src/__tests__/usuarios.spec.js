@@ -280,14 +280,6 @@ describe("Crear usuario", () => {
 
 
 
-
-
-
-
-
-
-
-
 describe("Actualizar usuario", () => {
   let req, res;
 
