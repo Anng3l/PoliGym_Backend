@@ -4,7 +4,6 @@ import User from "../models/users_model.js";
 import bcrypt from "bcrypt";
 import nodemailerMethods from "../config/nodemailer";
 
-
 // Mock del modelo User
 jest.mock("../models/users_model.js");
 
@@ -23,7 +22,10 @@ describe("Gestión de usuarios", () => {
   describe("Listar usuarios", () => {
     it("debe devolver todos los usuarios", async () => {
       const fakeUsers = [{ username: "juan" }, { username: "maria" }];
-      User.find.mockResolvedValue(fakeUsers);
+      // simulamos User.find().select() retornando una promesa con fakeUsers
+      User.find.mockReturnValue({
+        select: jest.fn().mockResolvedValue(fakeUsers)
+      });
 
       await getAllUsersController(req, res);
 
@@ -31,8 +33,21 @@ describe("Gestión de usuarios", () => {
       expect(res.json).toHaveBeenCalledWith(fakeUsers);
     });
 
+    it("debe devolver mensaje si no hay usuarios", async () => {
+      User.find.mockReturnValue({
+        select: jest.fn().mockResolvedValue(null)
+      });
+
+      await getAllUsersController(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ msg: "No hay usuarios registrados" });
+    });
+
     it("debe manejar errores correctamente", async () => {
-      User.find.mockRejectedValue(new Error("DB error"));
+      User.find.mockImplementation(() => ({
+        select: jest.fn().mockRejectedValue(new Error("DB error"))
+      }));
 
       await getAllUsersController(req, res);
 
@@ -47,7 +62,10 @@ describe("Gestión de usuarios", () => {
     it("debe devolver un usuario por username", async () => {
       const user = { username: "juan" };
       req.params = { username: "juan" };
-      User.findOne.mockResolvedValue(user);
+
+      User.findOne.mockReturnValue({
+        select: jest.fn().mockResolvedValue(user)
+      });
 
       await getOneUserController(req, res);
 
@@ -57,7 +75,10 @@ describe("Gestión de usuarios", () => {
 
     it("debe manejar usuario no encontrado", async () => {
       req.params = { username: "noexiste" };
-      User.findOne.mockResolvedValue(null);
+
+      User.findOne.mockReturnValue({
+        select: jest.fn().mockResolvedValue(null)
+      });
 
       await getOneUserController(req, res);
 
@@ -67,7 +88,10 @@ describe("Gestión de usuarios", () => {
 
     it("debe manejar errores correctamente", async () => {
       req.params = { username: "error" };
-      User.findOne.mockRejectedValue(new Error("DB error"));
+
+      User.findOne.mockImplementation(() => ({
+        select: jest.fn().mockRejectedValue(new Error("DB error"))
+      }));
 
       await getOneUserController(req, res);
 
@@ -82,7 +106,10 @@ describe("Gestión de usuarios", () => {
     it("debe devolver usuarios con un rol válido", async () => {
       const users = [{ username: "admin1", role: "administrador" }];
       req.params = { role: "administrador" };
-      User.find.mockResolvedValue(users);
+
+      User.find.mockReturnValue({
+        select: jest.fn().mockResolvedValue(users)
+      });
 
       await getUsersByRoleController(req, res);
 
@@ -99,9 +126,25 @@ describe("Gestión de usuarios", () => {
       expect(res.json).toHaveBeenCalledWith({ msg: "El rol ingresado es incorrecto" });
     });
 
+    it("debe manejar caso sin usuarios encontrados", async () => {
+      req.params = { role: "cliente" };
+
+      User.find.mockReturnValue({
+        select: jest.fn().mockResolvedValue(null)
+      });
+
+      await getUsersByRoleController(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(203);
+      expect(res.json).toHaveBeenCalledWith({ msg: "No se encontraron usuarios con el rol cliente" });
+    });
+
     it("debe manejar errores correctamente", async () => {
       req.params = { role: "cliente" };
-      User.find.mockRejectedValue(new Error("DB error"));
+
+      User.find.mockImplementation(() => ({
+        select: jest.fn().mockRejectedValue(new Error("DB error"))
+      }));
 
       await getUsersByRoleController(req, res);
 
@@ -113,12 +156,10 @@ describe("Gestión de usuarios", () => {
   });
 });
 
-
-
 jest.mock("../models/users_model.js");
 jest.mock("bcrypt");
 jest.mock("../config/nodemailer.js");
-/*
+
 describe("Crear usuario", () => {
   let req, res;
 
@@ -234,9 +275,6 @@ describe("Crear usuario", () => {
 });
 
 
-*/
-
-
 
 
 
@@ -260,7 +298,7 @@ describe("Actualizar usuario", () => {
         name: "Nombre Correcto",  // Longitud 3-15 caracteres
         lastname: "Apellido Valido",  // Longitud 2-15 caracteres
         email: "test@example.com",  // Email válido
-        password: "ValidPass123@"  // Cumple requisitos de contraseña
+        //password: "ValidPass123@" Cumple requisitos de contraseña
       }
     };
     res = {

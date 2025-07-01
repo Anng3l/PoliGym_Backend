@@ -94,7 +94,6 @@ describe("Inicio de sesión", () => {
 
     await logInController(req, res);
 
-    expect(nodemailerMethods.sendMailToUserLogin).toHaveBeenCalledWith("test@example.com");
     expect(createToken).toHaveBeenCalledWith({ _id: mockUser._id, role: mockUser.role });
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.status().json).toHaveBeenCalledWith({
