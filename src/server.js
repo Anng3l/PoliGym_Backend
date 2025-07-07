@@ -31,13 +31,19 @@ app.use(express.json());
 app.use(cookieParser());
 
 
+
 app.use(cors({
     origin: function (origin, callback) {
-        callback(null, origin);
+        if (!origin) {
+            //Permitir si viene de servicios como Postman, Insomnia, etc.
+            return callback(null, true);
+        } else {
+            return callback(new Error("CORS: Access denied from browser-based origin"));
+        }
     },
-    credentials: true,
     methods: "GET,POST,PUT,DELETE,OPTIONS"
 }));
+
 
 
 
