@@ -10,8 +10,7 @@ import routerAlimentacion from "./routers/alimentacion_router.js";
 
 import dotenv from "dotenv"
 import dbConnect from "./config/dbConnect.js";
-//import cloudinary from "cloudinary"
-//import fileUpload from "express-fileupload";
+
 import cookieParser from "cookie-parser";
 import cors from "cors"
 
@@ -23,18 +22,6 @@ dotenv.config();
 
 const app = express();
 
-/*
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-});
-app.use(fileUpload({
-    useTempFiles: true,
-    tempFileDir: "./uploads"
-}));
-*/
-
 
 const PORT = process.env.PORT || 7001;
 app.set("port", PORT);
@@ -43,22 +30,13 @@ app.use(express.json());
     //Middleware para cookies
 app.use(cookieParser());
 
-    //Solicitudes desde un dominio en particular
-const allowedOrigins = [
-    "https://poli-gym-frontend.vercel.app",
-    "http://localhost:5173"
-];
 
 app.use(cors({
     origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
-        }
+        callback(null, origin);
     },
-    methods: "GET,POST,PUT,DELETE,OPTIONS",
-    credentials: true
+    credentials: true,
+    methods: "GET,POST,PUT,DELETE,OPTIONS"
 }));
 
 
