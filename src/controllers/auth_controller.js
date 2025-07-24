@@ -3,7 +3,7 @@ import { check, validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
 
 //import autenticacion from "../models/auth_model.js"
-import { createToken } from "../middlewares/auth.js";
+import { createRefreshToken, createToken } from "../middlewares/auth.js";
 import User from "../models/users_model.js";
 import nodemailerMethods from "../config/nodemailer.js";
 import mongoose from "mongoose";
@@ -50,8 +50,16 @@ const logInController = async (req, res) => {
 
         //Generación de jwt de acceso y de refresco
         const token = await createToken({_id: user._id, role: user.role});
+        const refreshToken = await createRefreshToken({_id: user._id, role: user.role});
         
         await user.save();
+
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "None",
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
 
         return res.status(200).json({token, role: user.role, _id: user._id, username: user.username, name: user.name, lastname: user.lastname});
     }
@@ -208,68 +216,34 @@ const verificacionDeRegistroController = async (req, res) => {
 const refreshTokenController = async (req, res) => {
     try
     {   
-        //No hace falta destructurar las cookies pues cookie-parser las convierte a objeto
         const cookies = req.cookies;
 
-        if (!cookies?.jwt) return res.status(401).json({msg: "Cookie o jwt no provisto en las cookies"});
-        const refreshedJwt = cookies.jwt.trim();         //------------------------------------------------------------------------------------------------------------------------------------
-        res.clearCookie("jwt", { httpOnly: true, secure: true});
-        const userBD = await User.findOne({refreshToken: refreshedJwt});
+        if (!cookies?.refreshToken) return res.status(401).json({msg: "Cookie no provista"});
+        const refreshedJwt = cookies.refreshToken.trim();         //------------------------------------------------------------------------------------------------------------------------------------
         
-        //Reutilización del Refresh JWT
-        if (!userBD) {
-            jwt.verify (
-                refreshedJwt,
-                process.env.REFRESH_JWT_SECRET,
-                async (error, decoded) => {
-                    //JWT inválido
-                    if (error) return res.status(403).json({msg: "JWt inválido"});
-                    //JWT válido y utilizado
-                    let hackedUserBD = await User.findOne({ _id: decoded._id });
-                    hackedUserBD.refreshToken = [];
-                    await hackedUserBD.save();
-
-                    return res.status(403).json({msg: "No existe usuario asociado con el jwt de refresco"});
-                }
-            )
-        }
-        
-        //Para la autenticación en múltiples dispositivos
-        let newJwtArray = userBD.refreshToken.filter(rt => rt !== refreshedJwt);
-
         jwt.verify(
             refreshedJwt,
             process.env.REFRESH_JWT_SECRET,
             async (error, decoded) => {
-                //JWT expirado o manipulado
-                let idObject = new mongoose.Types.ObjectId(`${decoded._id}`);
-                
-                //console.log("Id usuario: ", typeof(userBD._id), userBD._id, "Decoded: ", typeof(idObject), idObject);
-                
-                if (error || !userBD._id.equals(idObject)) return res.status(401).json({msg: "Error en la verificación del JWT de refresco"});
+                                
+                if (error)
+                {
+                    if (error.name === "TokenExpiredError")
+                    {
+                        return res.status(403).json({msg: "Refresh token expirado. Vuelva a iniciar sesión."});
+                    }
+                    return res.status(401).json({msg: "Refresh token inválido."});
+                } 
                 //JWT aún es válido
-                const accessJwt = jwt.sign(
-                    { _id: decoded._id, role: decoded.role },
-                    process.env.JWT_SECRET,
-                    {expiresIn: "15m"}
-                );
+                const accessJwt = await createToken({_id: decoded._id, role: decoded.role});
                 
-                const token = jwt.sign(
-                    { _id: decoded._id, role: decoded.role },
-                    process.env.REFRESH_JWT_SECRET,
-                    {expiresIn: "24h"}
-                );
-                userBD.refreshToken = [...newJwtArray, token];
-                await userBD.save();
-
-                res.cookie("jwt", token, {httpOnly: true, secure: true, maxAge: 86400000});
                 return res.status(200).json({accessJwt, role: decoded.role, _id: decoded._id})
             }    
         );
     }
     catch(error) {
         return res.status(500).json({
-            succes: false,
+            success: false,
             msg: "Error en la generación de nuevo JWT",
             error: error.message
         });
@@ -277,41 +251,14 @@ const refreshTokenController = async (req, res) => {
 }
 
 const logOutController = async (req, res) => {
-    //En el frontend también se debe eliminar el jwt
     const cookies = req.cookies;
 
     try
     {
-        if (!cookies?.jwt) return res.status(203).json({msg: "Cookie o jwt no enviado"});
-        const refreshJwt = cookies.jwt.trim();
-        const userBD = await User.findOne({refreshToken: refreshJwt});
+        if (!cookies?.refreshToken) return res.status(203).json({msg: "Cookie o jwt no enviado"});
 
-        //Reutilización de jwt de refresco
-        if (!userBD)
-        {
-            jwt.verify (
-                refreshJwt,
-                process.env.REFRESH_JWT_SECRET,
-                async (error, decoded) => {
-                    if (error) return res.status(500).json({msg: "Error en el JWT de refresco"});
-                    let hackedUser = await User.findOne({_id: decoded._id});
-                    if (!hackedUser) return res.status(203).json({msg: "No existe usuario -- logout"})
-                    hackedUser.refreshToken = [];
-                    await hackedUser.save();
-
-                    res.clearCookie("jwt", { httpOnly: true, secure: true });
-                    return res.status(203).json({msg: "No existe usuario con dicho jwt de refresco"});
-                }
-            );
-            return;
-        };
-        
-        //Para autenticación en múltiples dispositivos
-        userBD.refreshToken = userBD.refreshToken.find(rt => rt !== refreshJwt);
-        await userBD.save();
-        
-        res.clearCookie("jwt", { httpOnly: true, secure: true });
-        return res.status(200).json({msg: `JWT de refresco eliminado exitosamente del usuario ${userBD.username}`});
+        res.clearCookie("refreshToken", { httpOnly: true, secure: true, sameSite: "None" });
+        return res.status(200).json({msg: `JWT de refresco eliminado exitosamente del usuario`});
     }
     catch (error) {
         return res.status(500).json({
