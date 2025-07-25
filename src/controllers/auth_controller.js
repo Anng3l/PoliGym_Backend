@@ -93,23 +93,23 @@ const registerController = async (req, res) => {
             .isLength({min: 3, max: 10})
             .withMessage("El nombre de usuario debe tener entre 3 y 10 dígitos")
             .run(req);
-        
+
         await check("name")
             .isLength({min: 3, max: 15})
             .trim()
             .withMessage("El nombre debe tener entre 3 y 15 dígitos")
-            .matches(/^[A-Za-z]+$/)
-            .withMessage("El nombre debe contener sólo letras")
+            .isString()
+            .withMessage("El nombre debe contener letras")
             .run(req);
-    
+
         await check("lastname")
             .isLength({min: 2, max: 15})
             .trim()
             .withMessage("El apellido debe tener entre 2 y 15 dígitos")
-            .matches(/^[A-Za-z]+$/)
-            .withMessage("El apellido debe contener sólo letras")
+            .isString()
+            .withMessage("El apellido debe contener letras")
             .run(req);
-            
+
         await check("email")
             .isEmail()
             .trim()
@@ -122,12 +122,12 @@ const registerController = async (req, res) => {
             .trim()
             .isLength({max: 20})
             .withMessage("La contraseña debe tener entre 8 y 20 dígitos de longitud")
-            .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@_-])/)
+            .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@_-])(?!.*\s).+$/)
             .withMessage("La contraseña no cumple con el formato mínimo")
             .run(req);
 
         const errores = validationResult(req);
-        
+
         if (!errores.isEmpty()) {
             return res.status(400).json({
                 msg: 'Errores de validación',
@@ -295,6 +295,7 @@ const recoverPasswordMailingController = async (req, res) => {
         if (!email) return res.status(203).json({msg: "Correo no proporcionado"});
         const userBD = await User.findOne({email});
         if (!userBD) return res.status(404).json({msg: "No existe usuario con ese correo"});
+        if (userBD.confirmEmail === false) return res.status(203).json({msg: "Confirme su correo electrónico antes de recuperar su contraseña"})
 
         //Operaciones sobre la BD
         const token = userBD.createToken();

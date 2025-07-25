@@ -55,6 +55,21 @@ describe('Enviar correo para restablecimiento de contraseña', () => {
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({ msg: 'No existe usuario con ese correo' });
   });
+  it('debe retornar error si el correo no está confirmado', async () => {
+    validationResult.mockReturnValueOnce({ isEmpty: () => true });
+
+    const fakeUser = {
+      confirmEmail: false
+    };
+
+    User.findOne.mockResolvedValueOnce(fakeUser);
+
+    await recoverPasswordMailingController(req, res);
+    expect(res.status).toHaveBeenCalledWith(203);
+    expect(res.json).toHaveBeenCalledWith({
+      msg: "Confirme su correo electrónico antes de recuperar su contraseña"
+    });
+  });
 
   it('debe enviar correo y guardar usuario', async () => {
     validationResult.mockReturnValueOnce({ isEmpty: () => true });

@@ -107,7 +107,7 @@ const createUserController = async (req, res) => {
         .trim()
         .isLength({max: 20})
         .withMessage("La contraseña debe tener entre 8 y 20 dígitos de longitud")
-        .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@_-])/)
+        .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@_-])(?!.*\s).+$/)
         .withMessage("La contraseña no cumple con el formato mínimo")
         .run(req);
 
@@ -129,6 +129,12 @@ const createUserController = async (req, res) => {
         userBDControll = await User.findOne({email});
         if (userBDControll) return res.status(203).json({msg: "Email ya registrado"});
         if (!["administrador", "entrenador", "cliente"].includes(role)) return res.status(203).json({msg: "El rol ingresado es incorrecto"});
+
+
+        if (role === "cliente" && !email.endsWith('@epn.edu.ec'))
+        {
+            return res.status(203).json({msg: "Los clientes deben poseer un email con el dominio de la EPN"})
+        }
 
             //Hasheo de la contraseña
         const hashedPassword = await bcrypt.hash(password, 10);
