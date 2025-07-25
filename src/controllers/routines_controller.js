@@ -71,6 +71,13 @@ const createRoutineEntrenador = async (req, res) => {
               .isFloat({min: 1, max: 3600})
               .withMessage("Las repeticiones deben ser números positivos")
               .run(req)
+
+        await check(`exercises[${index}].measure`)
+              .optional()
+              .trim()
+              .isString()
+              .withMessage("La unidad de medida debe ser un string")
+              .run(req)
       };
       const erroresEjercicios = validationResult(req);
       if (!erroresEjercicios.isEmpty()) {
@@ -156,6 +163,13 @@ const createRoutine = async (req, res) => {
               .trim()
               .isFloat({min: 1, max: 3600})
               .withMessage("Las repeticiones deben ser números positivos")
+              .run(req)
+
+        await check(`exercises[${index}].measure`)
+              .optional()
+              .trim()
+              .isString()
+              .withMessage("La unidad de medida debe ser un string")
               .run(req)
       };
       const erroresEjercicios = validationResult(req);
@@ -346,6 +360,13 @@ const updateRoutineEntrenador = async (req, res) => {
               .isFloat({min: 1, max: 3600})
               .withMessage("Las repeticiones deben ser números positivos")
               .run(req)
+        
+        await check(`exercises[${index}].measure`)
+              .optional()
+              .trim()
+              .isString()
+              .withMessage("La unidad de medida debe ser un string")
+              .run(req)
       };
       const erroresEjercicios = validationResult(req);
       if (!erroresEjercicios.isEmpty()) {
@@ -453,6 +474,13 @@ const updateRoutine = async (req, res) => {
               .trim()
               .isFloat({min: 1, max: 3600})
               .withMessage("Las repeticiones deben ser números positivos")
+              .run(req)
+        
+        await check(`exercises[${index}].measure`)
+              .optional()
+              .trim()
+              .isString()
+              .withMessage("La unidad de medida debe ser un string")
               .run(req)
       };
       const erroresEjercicios = validationResult(req);

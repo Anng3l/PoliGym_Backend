@@ -4,7 +4,8 @@ import mongoose, { mongo } from "mongoose";
 const exerciseSchema = new mongoose.Schema({
   name: { type: String, require: false },
   series: { type: Number, require: false },
-  repetitions: { type: Number, require: false }
+  repetitions: { type: Number, require: false },
+  measure: { type: String, require: false }
 });
 
 // Esquema de Rutinas
