@@ -43,8 +43,8 @@ describe("Registrar cliente", () => {
         name: "Test",
         lastname: "User",
         email: "test@epn.edu.ec",
-        password: "Password1@",
-        confirmPassword: "Password1@"
+        password: "Password1@_",
+        confirmPassword: "Password1@_"
       }
     };
     const res = {
@@ -62,7 +62,7 @@ describe("Registrar cliente", () => {
       name: "Test",
       lastname: "User",
       email: "test@epn.edu.ec",
-      password: "Password1@",
+      password: "Password1@_",
       role: "cliente",
       token: "fakeToken",
       confirmEmail: false,

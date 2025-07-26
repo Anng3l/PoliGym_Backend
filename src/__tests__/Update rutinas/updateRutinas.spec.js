@@ -2,36 +2,34 @@ import { updateRoutineEntrenador, updateRoutine } from "../../controllers/routin
 import Routine from "../../models/routines_model.js";
 import mongoose from "mongoose";
 
-// Mock de express-validator
-jest.mock("express-validator", () => ({
-  check: () => ({
-    optional: () => ({
-      trim: () => ({
-        isString: () => ({
-          isLength: () => ({
-            withMessage: () => ({
-              run: jest.fn()
-            })
-          })
-        }),
-        isInt: () => ({
-          withMessage: () => ({
-            run: jest.fn()
-          })
-        }),
-        isFloat: () => ({
-          withMessage: () => ({
-            run: jest.fn()
+jest.mock("express-validator", () => {
+  const runMock = jest.fn(); // Simula validaciones exitosas
+  return {
+    check: jest.fn(() => ({
+      optional: () => ({
+        trim: () => ({
+          isString: () => ({
+            isLength: () => ({
+              withMessage: () => ({ run: runMock })
+            }),
+            withMessage: () => ({ run: runMock })
+          }),
+          isInt: () => ({
+            withMessage: () => ({ run: runMock })
+          }),
+          isFloat: () => ({
+            withMessage: () => ({ run: runMock })
           })
         })
       })
-    })
-  }),
-  validationResult: jest.fn(() => ({
-    isEmpty: () => true,
-    array: () => []
-  }))
-}));
+    })),
+    validationResult: jest.fn(() => ({
+      isEmpty: () => true,
+      array: () => []
+    }))
+  };
+});
+
 
 // Mock de mongoose.isValidObjectId
 jest.mock("mongoose", () => {
@@ -58,7 +56,7 @@ describe("Actualizar una rutina", () => {
         name: "Rutina nueva",
         description: "Rutina actualizada",
         exercises: [
-          { name: "Flexiones", series: 3, repetitions: 12 }
+          { name: "Flexiones", series: 3, repetitions: 12, measure: "unidades" }
         ]
       }
     };
@@ -68,14 +66,26 @@ describe("Actualizar una rutina", () => {
       json: jest.fn()
     };
 
-    // Simular rutina encontrada
-    Routine.findOne = jest.fn().mockResolvedValue({ _id: req.params._id });
+    // Mocks de Mongoose
+    const mockRutina = { _id: req.params._id };
+    Routine.findOne = jest.fn().mockResolvedValue(mockRutina);
     Routine.findOneAndUpdate = jest.fn().mockResolvedValue({
       _id: req.params._id,
       ...req.body
     });
 
     await updateRoutineEntrenador(req, res);
+
+    expect(Routine.findOne).toHaveBeenCalledWith({ _id: expect.anything() });
+    expect(Routine.findOneAndUpdate).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        name: "Rutina nueva",
+        description: "Rutina actualizada",
+        exercises: expect.any(Array)
+      }),
+      { new: true }
+    );
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
@@ -94,10 +104,10 @@ describe("Actualizar una rutina", () => {
         name: "Rutina cliente",
         description: "Rutina del cliente actualizada",
         exercises: [
-          { name: "Sentadillas", series: 4, repetitions: 15 }
+          { name: "Sentadillas", series: 4, repetitions: 15, measure: "unidades" }
         ]
       },
-      user: { _id: "usuario123" }
+      user: { _id: "123456789012345678901234" }
     };
 
     const res = {

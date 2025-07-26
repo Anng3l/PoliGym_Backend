@@ -2,9 +2,8 @@
 import { logInController, registerController } from "../controllers/auth_controller.js"; // Ajusta la ruta si es necesario
 import User from "../models/users_model.js";
 import bcrypt from "bcrypt";
-import { createToken } from "../middlewares/auth.js";
+import { createToken, createRefreshToken } from "../middlewares/auth.js";
 import nodemailerMethods from "../config/nodemailer.js";
-
 
 
 jest.mock("../models/users_model.js");
@@ -17,16 +16,6 @@ const getMockRes = () => {
   const status = jest.fn(() => ({ json }));
   return { res: { status }, json };
 };
-
-
-const mockRequest = (body = {}) => ({ body });
-const mockResponse = () => {
-  const res = {};
-  res.status = jest.fn().mockReturnValue(res);
-  res.json = jest.fn().mockReturnValue(res);
-  return res;
-};
-
 
 describe("Inicio de sesión", () => {
   let req;
@@ -91,10 +80,23 @@ describe("Inicio de sesión", () => {
     User.findOne.mockResolvedValue(mockUser);
     bcrypt.compare.mockResolvedValue(true);
     createToken.mockResolvedValue("mockedToken");
+    createRefreshToken.mockResolvedValue("mockedRefreshToken");
+
+    res.cookie = jest.fn(); // Importante
 
     await logInController(req, res);
 
     expect(createToken).toHaveBeenCalledWith({ _id: mockUser._id, role: mockUser.role });
+    expect(createRefreshToken).toHaveBeenCalledWith({ _id: mockUser._id, role: mockUser.role });
+    expect(res.cookie).toHaveBeenCalledWith(
+      "refreshToken",
+      "mockedRefreshToken",
+      expect.objectContaining({
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+      })
+    );
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.status().json).toHaveBeenCalledWith({
       token: "mockedToken",
@@ -105,6 +107,7 @@ describe("Inicio de sesión", () => {
       lastname: "User",
     });
   });
+
 
   it("debe retornar 500 si ocurre un error inesperado", async () => {
     User.findOne.mockImplementation(() => { throw new Error("Unexpected") });

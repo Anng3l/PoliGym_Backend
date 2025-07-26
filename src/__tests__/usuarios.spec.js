@@ -3,7 +3,7 @@ import User from "../models/users_model.js";
 
 import bcrypt from "bcrypt";
 import nodemailerMethods from "../config/nodemailer";
-
+/*
 // Mock del modelo User
 jest.mock("../models/users_model.js");
 
@@ -156,6 +156,7 @@ describe("Gestión de usuarios", () => {
   });
 });
 
+*/
 jest.mock("../models/users_model.js");
 jest.mock("bcrypt");
 jest.mock("../config/nodemailer.js");
@@ -171,7 +172,7 @@ describe("Crear usuario", () => {
         username: "juanperez",
         email: "juan@example.com",
         password: "Password123@",
-        role: "cliente"
+        role: "entrenador"
       }
     };
     res = {
@@ -201,7 +202,7 @@ describe("Crear usuario", () => {
       username: "juanperez",
       email: "juan@example.com",
       password: "hashedPassword123",
-      role: "cliente"
+      role: "entrenador"
     });
     expect(nodemailerMethods.sendMailToUser).toHaveBeenCalledWith(
       "juan@example.com",

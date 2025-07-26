@@ -98,7 +98,7 @@ const registerController = async (req, res) => {
             .isLength({min: 3, max: 15})
             .trim()
             .withMessage("El nombre debe tener entre 3 y 15 dígitos")
-            .isString()
+            .matches(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/)
             .withMessage("El nombre debe contener letras")
             .run(req);
 
@@ -106,7 +106,7 @@ const registerController = async (req, res) => {
             .isLength({min: 2, max: 15})
             .trim()
             .withMessage("El apellido debe tener entre 2 y 15 dígitos")
-            .isString()
+            .matches(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/)
             .withMessage("El apellido debe contener letras")
             .run(req);
 
