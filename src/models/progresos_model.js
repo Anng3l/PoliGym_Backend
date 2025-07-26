@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 
 const DetailSchema = new mongoose.Schema({
-    name: { type: String },   //Quizá un enum
-    measure: { type: Number }
+    name: { type: String },
+    measure: { type: Number },
+    unity: { type: String },
 });
 
 const ProgressSchema = new mongoose.Schema({

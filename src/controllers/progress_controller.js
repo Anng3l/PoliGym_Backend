@@ -55,6 +55,13 @@ const createOneProgressController = async (req, res) => {
                     .trim()
                     .withMessage("Las mediciones deben ser números")
                     .run(req)
+
+                await check(`exercises[${index}].unity`)
+                    .optional()
+                    .trim()
+                    .isString()
+                    .withMessage("La unidad de medida debe ser un string")
+                    .run(req)
             }
             const erroresDetails = validationResult(req);
             if (!erroresDetails.isEmpty()) {
@@ -179,6 +186,13 @@ const updateOneProgressController = async (req, res) => {
                     .isFloat({gt:0})
                     .trim()
                     .withMessage("La medición debe ser positivo")
+                    .run(req)
+
+                await check(`exercises[${index}].unity`)
+                    .optional()
+                    .trim()
+                    .isString()
+                    .withMessage("La unidad de medida debe ser un string")
                     .run(req)
             };
             const erroresDetails = validationResult(req);
