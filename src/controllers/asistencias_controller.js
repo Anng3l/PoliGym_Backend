@@ -35,6 +35,18 @@ export const crearAsistenciaControllerEntrenador = async (req, res) => {
       });
     }
     
+
+    const inputDate = new Date(req.body.checkInTime);
+    const today = new Date();
+    inputDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    if (inputDate > today)
+    {
+      return res.status(400).json({
+        msg: "La fecha no puede ser posterior a hoy"
+      })
+    }
     
 
     const fechaEntrada = new Date(req.body.checkInTime);
@@ -80,6 +92,19 @@ export const crearAsistenciaController = async (req, res) => {
         msg: 'Errores de validación',
         errores: errores.array()
       });
+    }
+
+
+    const inputDate = new Date(req.body.checkInTime);
+    const today = new Date();
+    inputDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    if (inputDate !== today)
+    {
+      return res.status(400).json({
+        msg: "La fecha no puede ser posterior, ni anterior, a hoy"
+      })
     }
 
     const nuevaAsistencia = new Asistencia({ ...req.body });

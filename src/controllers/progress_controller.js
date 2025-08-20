@@ -53,7 +53,7 @@ const createOneProgressController = async (req, res) => {
                     .optional()
                     .isFloat({min:0.1})
                     .trim()
-                    .withMessage("Las mediciones deben ser números")
+                    .withMessage("Las mediciones deben ser números mayores que 0.1")
                     .run(req)
 
                 await check(`exercises[${index}].unity`)
